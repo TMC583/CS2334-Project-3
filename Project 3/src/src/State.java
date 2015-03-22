@@ -58,7 +58,7 @@ public class State
 	public void addCity()
 	{
 		// append a city to the list
-		// list.add(city);
+		listOfCities.add(city);
 	}
 	
 	/**
