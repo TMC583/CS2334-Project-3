@@ -1,4 +1,5 @@
 import java.util.Calendar;
+import java.util.Comparator;
 /**
  * Project #3
  * CS 2334, Section 010
@@ -8,7 +9,7 @@ import java.util.Calendar;
  * </P>
  * @version 1.0
  */
-public class Person 
+public class Person implements Comparable<Person>, Comparator<Person>
 {
 	String name; // Name of Person
 	Calendar birthDate; // When Person was born
@@ -100,5 +101,20 @@ public class Person
 	{
 		return "";
 	}
-	
+	public int compareTo(Person obj){
+		int lex = (this.name.charAt(0)) - (obj.name.charAt(0));
+		if(lex == 0){
+			lex = (this.name.charAt(1)) - (obj.name.charAt(1));
+			if(lex == 0){
+				lex = (this.name.charAt(2)) - (obj.name.charAt(2));
+			}
+		}
+		return lex;
+	}
+	//TODO Implement
+	@Override
+	public int compare(Person p1, Person p2) {
+		
+		return 0;
+	}
 }
