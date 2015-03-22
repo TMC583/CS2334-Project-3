@@ -1,5 +1,5 @@
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.*;
+
 /**
  * Project #3
  * CS 2334, Section 010
@@ -40,8 +40,32 @@ public class UserInput
 	/**
 	 * The first question the user is prompted
 	 */
-	public void getUserInput()
+	public void getUserInput(Scanner keyboard) //TODO finish
 	{
+		String answer = "";
+		System.out.println("Are you searching for a person, place or team?");
+		answer = keyboard.next();
+		if(answer.equalsIgnoreCase("person"))
+		{
+			System.out.println("What is the first name of the person?");
+			answer = keyboard.next();
+			searchFirstName(answer);
+		}
+		else if(answer.equalsIgnoreCase("place"))
+		{
+			System.out.println("What is the name of the place?");
+			answer = keyboard.next();
+		}
+		else if(answer.equalsIgnoreCase("team"))
+		{
+			System.out.println("What is the name of the team?");
+			answer = keyboard.next();
+			searchTeam(answer);
+		}
+		else
+		{
+			System.out.println("Your response was not recognized");
+		}
 		// People Place or Team?
 	}
 	
@@ -73,8 +97,9 @@ public class UserInput
 	
 	/**
 	 * Adds data to the file provided by user
+	 * @param filename to be written to
 	 */
-	public void writeToFile()
+	public void writeToFile(String filename)
 	{
 		
 	}
@@ -97,16 +122,19 @@ public class UserInput
 	
 	/**
 	 * searches the database based on first name inputed by user
+	 * @param name to be searched for
 	 */
-	public void searchFirstName()
+	public void searchFirstName(String name)
 	{
-		
+		//method may need to be placed in the person class to work?
+		Collections.binarySearch(this.people,name);
 	}
 	
 	/**
 	 * searches the database based on last name inputed by user
+	 * @param name to be searched for
 	 */
-	public void searchLastName()
+	public void searchLastName(String name)
 	{
 		
 	}
@@ -152,8 +180,9 @@ public class UserInput
 	
 	/**
 	 * searches the database based on team name inputed by user
+	 * @param name to be searched for
 	 */
-	public void searchTeam()
+	public void searchTeam(String name)
 	{
 		
 	}
