@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Project #3
  * CS 2334, Section 010
@@ -14,15 +16,18 @@ public class City
 					   // May be referred to as "precise location"
 					   // or "geographical coordinates"
 	
+	ArrayList<Person> listOfPeople = new ArrayList<Person>();
+	String stateName;
 	/**
 	 * Creates data for a city
 	 * @param name of the city
 	 * @param location the geographical coordinates of the city
 	 */
-	public City(String name, Location location)
+	public City(String name, Location location, String stateName)
 	{
 		this.name = name;
 		this.location = location;
+		this.stateName = stateName;
 	}
 	
 	/**
@@ -68,6 +73,10 @@ public class City
 	public void setCityLocation(Location location)
 	{
 		this.location = location;
+	}
+	public String getStateName()
+	{
+		return stateName;
 	}
 	
 	/**
