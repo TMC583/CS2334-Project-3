@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 /**
  * Project #3
  * CS 2334, Section 010
@@ -8,21 +9,21 @@ import java.util.ArrayList;
  * </P>
  * @version 1.0
  */
-public class State 
+public class State implements Comparator<State>, Comparable<State>
 {
 	String name; // Name of the state
-	City city;   // A city in the state
 	ArrayList<City> listOfCities; // All the cities in the state
+	City tempCity;
 	
 	/**
 	 * The state is constructed with a name and city
 	 * @param name of the state
 	 * @param city in the state
 	 */
-	public State(String name, City city)
+	public State(String name, ArrayList<City> listOfCities)
 	{
 		this.name = name;
-		this.city = city;
+		this.listOfCities = listOfCities;
 	}
 	
 	/**
@@ -32,6 +33,11 @@ public class State
 	{
 		// defaultName = name;
 		// defaultCity = city;
+	}
+	
+	public State(String name)
+	{
+		this.name = name;
 	}
 	
 	/**
@@ -55,7 +61,7 @@ public class State
 	/**
 	 * Adds a city to the list of cities
 	 */
-	public void addCity()
+	public void addCity(City city)
 	{
 		// append a city to the list
 		listOfCities.add(city);
@@ -69,6 +75,10 @@ public class State
 	{
 		return listOfCities;
 	}
+	public void setListOfCities(ArrayList<City> listOfCities)
+	{
+		this.listOfCities = listOfCities;
+	}
 	
 	/**
 	 * Makes the information about the state (name and cities)
@@ -78,5 +88,18 @@ public class State
 	public String toString()
 	{
 		return "";
+	}
+
+	@Override
+	public int compareTo(State o) 
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int compare(State arg0, State arg1) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
