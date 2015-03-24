@@ -1,15 +1,5 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.LinkedHashMap;
-
+import java.util.*;
+import java.io.*;
 
 public class UserInput 
 {
@@ -17,6 +7,7 @@ public class UserInput
 	LinkedHashMap<String, Team> teams;
 	ArrayList<Person> people;
 	ArrayList<State> listOfStates;
+	ArrayList<City> listOfCities;
 	String temp;
 	InputStreamReader is = new InputStreamReader(System.in);
 	BufferedReader br = new BufferedReader(is);
@@ -49,7 +40,7 @@ public class UserInput
 		while(br.ready())
 		{
 			String line = br.readLine();
-			String[] data = line.split(",");
+			String[] data = line.split("; ");
 			Person namePerson = new Person(data[0]);
 			nameList.add(namePerson.getName());
 			
@@ -186,14 +177,93 @@ public class UserInput
 		}
 	}
 	
-	public void parseFileTeam(String fileName)
+	public void parseFileTeam(String fileName) throws FileNotFoundException, IOException
 	{
+		String filename = "";
+		File file = new File(filename);
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
 		
+		System.out.println("Enter the file path: ");
+		filename = br.readLine();
+
+		while(br.ready())
+			{
+				try
+				{
+					String line = br.readLine();
+					String[] data = line.split("; ");
+					int max = data.length;
+					City tempCity = new City(data[1],null);
+					State tempState = new State(data[2],tempCity);
+					ArrayList<String> roster = new ArrayList<String>();
+					int counter = 0;
+					for(int index = 0; counter<=max; index++)
+					{
+						roster.add(data[3+index]);
+					}
+					Team nameTeam = new Team(data[0],tempState,roster);
+					teams.put(nameTeam.getTeamName(), nameTeam);
+					//TODO make sure map is in alphabetical order.
+				}
+			
+				catch(NumberFormatException e)
+				{
+					br.readLine();
+				}
+			}
+		
+			br.close();
 	}
 	
-	public void ParseLocationFile(String fileName)
+	public void ParseCityFile(String fileName) throws FileNotFoundException, IOException
 	{
+		String filename = "";
+		File file = new File(filename);
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
 		
+		System.out.println("Enter the file path: ");
+		filename = br.readLine();
+		
+		while(br.ready())
+		{
+			String line = br.readLine();
+			String[] data = line.split("; ");
+			int value = Integer.valueOf(data[2]);
+			int value2 = Integer.valueOf(data[3]); 
+			Location tempLocation = new Location(value,value2);
+			State tempState = new State(data[1]);
+			City tempCity = new City(data[0],tempLocation,data[1]);
+			if(listOfStates.contains(tempState))
+			{
+				break; //This could break the program's loop. If it does then delete the shit and try that.
+			}
+			else
+			{
+				listOfStates.add(new State(data[1]));
+				
+			}
+			listOfCities.add(tempCity);
+	
+		}
+		ArrayList<City> tempCityList = new ArrayList<City>();
+		int counter = 0;
+		while(counter<=listOfStates.size()-1)
+		{
+			for(int index = 0; index <= listOfCities.size()-1; index++)
+			{
+				if(listOfCities.get(index).getStateName().equals(listOfStates.get(counter).getStateName()))
+				{
+					tempCityList.add(listOfCities.get(index));
+				}
+			}
+			listOfStates.get(counter).setListOfCities(tempCityList);
+			counter++;
+		}
+		//listOfStates.sort(c);
+		//TODO once comparator is implemented, use it as the argument
+		br.close();
 	}
 	
 	public void writeToFile() throws IOException
