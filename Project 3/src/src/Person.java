@@ -14,7 +14,16 @@ public class Person implements Comparable<Person>, Comparator<Person>
 	String name; // Name of Person
 	Calendar birthDate; // When Person was born
 	State birthPlace; // Where Person was born
+	Calendar deathDate; // When a Person died
 	
+	public Calendar getDeathDate() {
+		return deathDate;
+	}
+
+	public void setDeathDate(Calendar deathDate) {
+		this.deathDate = deathDate;
+	}
+
 	/**
 	 * Creates a Person object with a name, birthdate, and birthplace.
 	 * @param name person's name
@@ -101,7 +110,8 @@ public class Person implements Comparable<Person>, Comparator<Person>
 	{
 		return "";
 	}
-	public int compareTo(Person obj){
+	//TODO these will need to be changed once first and last name are implemented
+	public int compareTo(Person obj){	//compares by first name
 		int lex = (this.name.charAt(0)) - (obj.name.charAt(0));
 		if(lex == 0){
 			lex = (this.name.charAt(1)) - (obj.name.charAt(1));
@@ -111,7 +121,8 @@ public class Person implements Comparable<Person>, Comparator<Person>
 		}
 		return lex;
 	}
-	//TODO Implement
+	//TODO Implement the search for last name method, careful with these changes as they will break
+	//the current parsing methods
 	@Override
 	public int compare(Person p1, Person p2) {
 		
