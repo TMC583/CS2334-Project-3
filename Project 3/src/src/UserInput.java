@@ -1,205 +1,327 @@
 import java.util.*;
+import java.io.*;
 
-/**
- * Project #3
- * CS 2334, Section 010
- * March 4, 2015
- * <P>
- * The user is asked a series of questions to determine
- * the user's search criteria. 
- * </P>
- * @version 1.0
- */
 public class UserInput 
 {
-	String fileName; // file (file may be referred to as database
-					 // throughout the class) path given by user
-	LinkedHashMap<String, Team> teams; // an ordered hashmap of teams
-	ArrayList<Person> people; // list of people
-	ArrayList<State> listOfStates; // list of states
-	
-	/**
-	 * Default constructor for the class
-	 */
+	String fileName;
+	LinkedHashMap<String, Team> teams;
+	ArrayList<Person> people;
+	ArrayList<State> listOfStates;
+	ArrayList<City> listOfCities;
+	String temp;
+	InputStreamReader is = new InputStreamReader(System.in);
+	BufferedReader br = new BufferedReader(is);
+	//TODO once first and last name are implemented we will need a method to read in those specifically
+	//for people objects so that they can be sorted in that manner.
 	public UserInput()
 	{
-		/*
-		 *  Prompt user for filename and uses the data in the file
-		 */
+		//Will not be used
 	}
 	
-	/**
-	 * Gets the People from the file
-	 * @param fileName is file provided by user
-	 */
 	public void parseFilePeople(String fileName)
 	{
+		String filename = "";
+		File file = new File(filename);
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
 		
+		System.out.println("Enter the file path: ");
+		filename = br.readLine();
+		
+		int day;
+		int month;
+		int year;
+		
+		/**
+		 * While loop iterates through each line of the file, splitting it on commas and storing the data accordingly. Had to
+		 * try/catch the majority of the block of code because of the NumberFormatException thrown when reading in/parsing 
+		 * incorrect data.
+		 */
+		//TODO this method was taken straight from project 2 and needs some adjustments for it to work in
+		//this project
+		while(br.ready())
+		{
+			String line = br.readLine();
+			String[] data = line.split("; ");
+			Person namePerson = new Person(data[0]);
+			nameList.add(namePerson.getName());
+			
+			try
+			{
+				String[] birthdayInfo = data[1].split("/");
+			
+				day = Integer.parseInt(birthdayInfo[0]);
+				month = Integer.parseInt(birthdayInfo[1]);
+				year= Integer.parseInt(birthdayInfo[2]);
+				Calendar birthdate = new GregorianCalendar(year, month, day);
+				Person newLivingPerson = new Person(data[0], birthdate, data[2], data[3], false);
+				fullList.add(newLivingPerson);
+				
+				/**
+				 * This if-block checks to see if there is a death date. If there is then it seperately parses all the data and
+				 * stores it individually into int's for storage in Calendar objects.
+				 */
+				if(data.length > 4)
+				{
+					String[] deathInfo = data[4].split("/");
+					day = Integer.parseInt(deathInfo[0]);
+					month = Integer.parseInt(deathInfo[1]);
+					year = Integer.parseInt(deathInfo[2]);
+					Calendar deathDate = new GregorianCalendar(year, month, day);
+					Person newDeadPerson = new Person(data[0], birthdate, data[2], data[3], deathDate, true);
+					fullList.add(newDeadPerson);
+				
+				}
+			}
+			/**
+			 * Catch block skips a line if Exception is thrown.
+			 */
+			catch(NumberFormatException e)
+			{
+				br.readLine();
+			}
+			
+		}
+			br.close();
 	}
 	
-	/**
-	 * The first question the user is prompted
-	 */
-	public void getUserInput(Scanner keyboard) //TODO finish
+	public void getUserInput()
 	{
-		String answer = "";
-		System.out.println("Are you searching for a person, place or team?");
-		answer = keyboard.next();
-		if(answer.equalsIgnoreCase("person"))
+		while(true)
 		{
-			System.out.println("What is the first name of the person?");
-			answer = keyboard.next();
-			searchFirstName(answer);
+			System.out.println("People or Place?");
+			temp = br.readLine();
+			if(temp.equalsIgnoreCase("People"))
+			{
+				System.out.println("Sort or Search?");
+				temp = br.readLine();
+				if(temp.equalsIgnoreCase("Sort"))
+				{
+					System.out.println("First or Last?");
+					temp = br.readLine();
+						if(temp.equalsIgnoreCase("First"))
+						{
+							sortFirst();
+							savePrompt();
+						}
+						else if(temp.equalsIgnoreCase("Last"))
+						{
+							sortLast();
+							savePrompt();
+						}
+				}
+				else if(temp.equalsIgnoreCase("Search"))
+				{
+					System.out.println("Exact or Partial?");
+					temp = br.readLine();
+					if(temp.equalsIgnoreCase("Exact"))
+					{
+						System.out.println("Enter a name exactly as it would be in the database.");
+						temp = br.readLine();
+					}
+					else if(temp.equalsIgnoreCase("Partial"))
+					{
+						System.out.println("Enter a partial name.");
+						temp = br.readLine();
+					}
+				} // End search
+			}
+			else if(temp.equalsIgnoreCase("Place"))
+			{
+
+				System.out.println("State or City?");
+				temp = br.readLine();
+
+				if(temp.equalsIgnoreCase("State"))
+				{
+					System.out.println("Enter the two letter state abbreviation.");
+					temp = br.readLine();
+					searchState();
+					savePrompt();
+				}
+				else if(temp.equalsIgnoreCase("City"))
+				{
+					System.out.println("Enter the two letter state abbreviation followed "
+							+ "by the city name.");
+					temp = br.readLine();
+					searchCity();
+					savePrompt();
+				}
+			}
 		}
-		else if(answer.equalsIgnoreCase("place"))
+	}
+	
+	public void savePrompt() throws IOException
+	{
+		System.out.println("Save or Skip?");
+		temp = br.readLine();
+		if(temp.equalsIgnoreCase("Save"))
 		{
-			System.out.println("What is the name of the place?");
-			answer = keyboard.next();
+			System.out.println("Which file would you like to save to?");
+			temp = br.readLine();
+			
+			System.out.println("Alrighty! Saving to " + temp);
+			
 		}
-		else if(answer.equalsIgnoreCase("team"))
+		//else if(temp.equalsIgnoreCase("Skip"))
+		//{
+			//return;
+		//}
+		System.out.println("Continue or Exit?");
+		temp = br.readLine();
+		if(temp.equalsIgnoreCase("Exit"))
 		{
-			System.out.println("What is the name of the team?");
-			answer = keyboard.next();
-			searchTeam(answer);
+			System.exit(0);
 		}
 		else
 		{
-			System.out.println("Your response was not recognized");
+			return;
 		}
-		// People Place or Team?
 	}
 	
-	/**
-	 * Stores the last input by user
-	 */
-	public void savePrompt()
+	public void parseFileTeam(String fileName) throws FileNotFoundException, IOException
+	{
+		String filename = "";
+		File file = new File(filename);
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+		
+		System.out.println("Enter the file path: ");
+		filename = br.readLine();
+
+		while(br.ready())
+			{
+				try
+				{
+					String line = br.readLine();
+					String[] data = line.split("; ");
+					int max = data.length;
+					City tempCity = new City(data[1]);
+					State tempState = new State(data[2]);
+					ArrayList<String> roster = new ArrayList<String>();
+					int counter = 0;
+					for(int index = 0; counter<=max; index++)
+					{
+						roster.add(data[3+index]);
+					}
+					Team nameTeam = new Team(data[0],tempState,roster);
+					teams.put(nameTeam.getTeamName(), nameTeam);
+					Collections.sort(teams);  //need comparator to sort by team name. More confusing than
+					//sorting a regular list
+					//TODO make sure map is in alphabetical order.
+				}
+			
+				catch(NumberFormatException e)
+				{
+					br.readLine();
+				}
+			}
+		
+			br.close();
+	}
+	
+	public void ParseCityFile(String fileName) throws FileNotFoundException, IOException
+	{
+		String filename = "";
+		File file = new File(filename);
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+		
+		System.out.println("Enter the file path: ");
+		filename = br.readLine();
+		
+		while(br.ready())
+		{
+			String line = br.readLine();
+			String[] data = line.split("; ");
+			int value = Integer.valueOf(data[2]);
+			int value2 = Integer.valueOf(data[3]); 
+			Location tempLocation = new Location(value,value2);
+			State tempState = new State(data[1]);
+			City tempCity = new City(data[0],tempLocation,data[1]);
+			if(listOfStates.contains(tempState))
+			{
+				break; //This could break the program's loop. If it does then delete the shit and try that.
+			}
+			else
+			{
+				listOfStates.add(new State(data[1]));
+				
+			}
+			listOfCities.add(tempCity);
+	
+		}
+		ArrayList<City> tempCityList = new ArrayList<City>();
+		int counter = 0;
+		while(counter<=listOfStates.size()-1)
+		{
+			for(int index = 0; index <= listOfCities.size()-1; index++)
+			{
+				if(listOfCities.get(index).getStateName().equalsIgnoreCase(listOfStates.get(counter).getStateName()))
+				{
+					tempCityList.add(listOfCities.get(index));
+				}
+			}
+			listOfStates.get(counter).setListOfCities(tempCityList);
+			counter++;
+		}
+		Collections.sort(listOfStates);
+		//TODO once comparator is implemented, use it as the argument
+		br.close();
+	}
+	
+	public void writeToFile() throws IOException
+	{
+		FileWriter outfile = new FileWriter("output.txt");
+		BufferedWriter bw = new BufferedWriter(outfile);
+		bw.write("This is a test -- did it work?");
+		bw.newLine();
+		bw.close();
+	}
+	
+	public void searchFirstName()
 	{
 		
 	}
 	
-	/**
-	 * Gets the teams from file
-	 * @param fileName is file provided by user
-	 */
-	public void parseFileTeam(String fileName)
+	public void searchLastName()
 	{
 		
 	}
 	
-	/**
-	 * Gets the locations from file
-	 * @param fileName is file provided by user
-	 */
-	public void ParseLocationFile(String fileName)
-	{
-		
-	}
-	
-	/**
-	 * Adds data to the file provided by user
-	 * @param filename to be written to
-	 */
-	public void writeToFile(String filename)
-	{
-		
-	}
-	
-	/**
-	 * sorts the data based on Person's first name
-	 */
-	public void sortByFirstName()
-	{
-		
-	}
-	
-	/**
-	 * sorts the data based on Person's last name
-	 */
-	public void sortByLastName()
-	{
-		
-	}
-	
-	/**
-	 * searches the database based on first name inputed by user
-	 * @param name to be searched for
-	 */
-	public void searchFirstName(String name)
-	{
-		//method may need to be placed in the person class to work?
-		Collections.binarySearch(this.people,name);
-	}
-	
-	/**
-	 * searches the database based on last name inputed by user
-	 * @param name to be searched for
-	 */
-	public void searchLastName(String name)
-	{
-		
-	}
-	
-	/**
-	 * searches the database based on a string inputed by user
-	 * the string does not have to be an exact word in the database.
-	 * The data in the file will find information with the same sequence
-	 * of characters (String). Ex input: "Har" Ex output: "Harry"
-	 */
 	public void partialSearch()
 	{
 		
 	}
 	
-	/**
-	 * searches the database based on a string inputed by user
-	 * the string has to be an exact word in the database.
-	 * Ex input: "Harry" Ex output: "Harry" //correct
-	 * Ex input: "Harry" Ex output: "Harold"//incorrect
-	 * Ex input: "Har"   Ex output: "Harry" //incorrect
-	 */
 	public void exactSearch()
 	{
 		
 	}
 	
-	/**
-	 * searches the database based on city name inputed by user
-	 */
 	public void searchCity()
 	{
 		
 	}
 	
-	/**
-	 * searches the database based on state inputed by user
-	 */
 	public void searchState()
 	{
 		
 	}
 	
-	/**
-	 * searches the database based on team name inputed by user
-	 * @param name to be searched for
-	 */
-	public void searchTeam(String name)
+	public void searchTeam()
 	{
 		
 	}
 	
-	/**
-	 * displays the information based on what the user searched by
-	 */
 	public void displayInformation()
 	{
 		
 	}
 	
-	/**
-	 * displays a graphical representation of the data based on user's request
-	 */
 	public void graphingInformation()
 	{
-		
+		//TODO focus on the pie chart divy upped by age ranges of players, the other GUI feature
+		//looks really hard.
 	}
 }
