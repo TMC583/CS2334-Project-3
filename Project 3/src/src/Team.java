@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Project #3
  * CS 2334, Section 010
@@ -7,20 +9,23 @@
  * </P>
  * @version 1.0
  */
-public class Team 
+public class Team implements Comparable<Team>
 {
 	String name; // Name of Team
 	State state; // Location of Team
+	ArrayList<String> roster; //roster of team members
 	
 	/**
 	 * The name and state of the team are created
 	 * @param name of team
 	 * @param state in which team is in
+	 * @param list of people in the team
 	 */
-	public Team(String name, State state)
+	public Team(String name, State state, ArrayList<String> roster)
 	{
 		this.name = name;
 		this.state = state;
+		this.roster = roster;
 	}
 	
 	/**
@@ -47,7 +52,7 @@ public class Team
 	 */
 	public void setTeamName(String name)
 	{
-		
+		this.name = name;
 	}
 	
 	/**
@@ -76,5 +81,17 @@ public class Team
 	public String toString()
 	{
 		return "";
+	}
+
+	public int compareTo(Team obj)	//compares by team name
+	{
+		int lex = (this.name.charAt(0)) - (obj.name.charAt(0));
+		if(lex == 0){
+			lex = (this.name.charAt(1)) - (obj.name.charAt(1));
+			if(lex == 0){
+				lex = (this.name.charAt(2)) - (obj.name.charAt(2));
+			}
+		}
+		return lex;
 	}
 }
