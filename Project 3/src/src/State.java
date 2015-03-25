@@ -13,7 +13,6 @@ public class State implements Comparator<State>, Comparable<State>
 {
 	String name; // Name of the state
 	ArrayList<City> listOfCities; // All the cities in the state
-	City tempCity;
 	
 	/**
 	 * The state is constructed with a name and city
@@ -91,10 +90,16 @@ public class State implements Comparator<State>, Comparable<State>
 	}
 
 	@Override
-	public int compareTo(State o) 
+	public int compareTo(State obj) 
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int lex = (this.name.charAt(0)) - (obj.name.charAt(0));
+		if(lex == 0){
+			lex = (this.name.charAt(1)) - (obj.name.charAt(1));
+			if(lex == 0){
+				lex = (this.name.charAt(2)) - (obj.name.charAt(2));
+			}
+		}
+		return lex;
 	}
 
 	@Override
