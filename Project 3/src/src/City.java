@@ -38,6 +38,10 @@ public class City
 		// defaultName = name;
 		// defaultLocation = location;
 	}
+	public City(String name)
+	{
+		this.name = name;
+	}
 	
 	/**
 	 * Retrieves the city's title/name
